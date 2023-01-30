@@ -17,9 +17,8 @@
                 <img :src="image" :alt="altText"/>
             </div>
             <div class="product-info">
-                <h1>{{ product }}</h1>
-                <span v-if="onSale">on Sale</span>
-                <span v-else></span>
+                <h1>{{ title }}</h1>
+             <span v-if="onSale">{{ sale }}</span> <!-- скидка всегда -->
                 <p>{{ description }}</p>
                 <p v-if="inStock">In stock</p>
                 <p v-else :class="{ outOfStock: !inStock }">Out of stock</p>
@@ -27,10 +26,10 @@
                     <li v-for="detail in details">{{ detail }}</li>
                 </ul>
                 <div class="color-box"
-                     v-for="variant in variants"
+                     v-for="(variant, index) in variants"
                      :key="variant.variantId"
                      :style="{ backgroundColor:variant.variantColor }"
-                     @mouseover="updateProduct(variant.variantImage)">
+                     @mouseover="updateProduct(index)">
                 </div>
 
                 <ul>
