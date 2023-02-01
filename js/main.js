@@ -1,3 +1,5 @@
+let eventBus = new Vue()
+
 Vue.component('product-details', {
     props: {
         details: {
@@ -43,6 +45,7 @@ Vue.component('product', {
             </div>
             <div>            
    </div>
+   </div>
  `,
     data() {
         return {
@@ -87,6 +90,11 @@ Vue.component('product', {
         updateProduct(index) {
             this.selectedVariant = index;
         },
+        mounted() {
+            eventBus.$on('review-submitted', productReview => {
+                this.reviews.push(productReview)
+            })
+        }
     },
     computed: {
         title() {
@@ -110,6 +118,44 @@ Vue.component('product', {
         },
     }
 })
+
+Vue.component('product-tabs', {
+    props: {
+        reviews: {
+            type: Array,
+            required: false
+        }
+    },
+    template: `
+     <div>   
+       <ul>
+         <span class="tab" :class="{ activeTab: selectedTab === tab }" v-for="(tab, index) in tabs" @click="selectedTab = tab">{{ tab }}</span>
+       </ul>
+       <div v-show="selectedTab === 'Reviews'">
+         <p v-if="!reviews.length">There are no reviews yet.</p>
+         <ul>
+           <li v-for="review in reviews">
+           <p>{{ review.name }}</p>
+           <p>Rating: {{ review.rating }}</p>
+           <p>Recommendation {{ review.recommend }}</p>
+           <p>{{ review.review }}</p>
+           </li>
+         </ul>
+       </div>
+       <div v-show="selectedTab === 'Make a Review'">
+         <product-review></product-review>
+       </div>
+     </div>
+`,
+
+    data() {
+        return {
+            tabs: ['Reviews', 'Make a Review'],
+            selectedTab: 'Reviews'  // устанавливается с помощью @click
+        }
+    }
+})
+
 
 Vue.component('product-review', {
     template: `
@@ -140,7 +186,7 @@ Vue.component('product-review', {
          <option>2</option>
          <option>1</option>
        </select>
-       
+       <p>Would you recommend this product?</p>
        <input type="radio" id="yes" value="Рекомендую" v-model="recommend">
        <label for="yes">Рекомендую</label>
        <input type="radio" id="no" value="Не рекомендую" v-model="recommend">
@@ -150,12 +196,6 @@ Vue.component('product-review', {
      </p>
 
 </form>
-<p v-if="errors.length">
-    <b>Please correct the following error(s):</b>
-    <ul>
-        <li v-for="error in errors">{{ error }}</li>
-    </ul>
-</p>
  `,
     data() {
         return {
@@ -175,7 +215,7 @@ Vue.component('product-review', {
                     rating: this.rating,
                     recommend: this.recommend,
                 }
-                this.$emit('review-submitted', productReview)
+                eventBus.$emit('review-submitted', productReview)
                 this.name = null
                 this.review = null
                 this.rating = null
@@ -208,8 +248,5 @@ let app = new Vue({
                 }
             }
         },
-        addReview(productReview) {
-            this.reviews.push(productReview)
-        }
     }
 })
