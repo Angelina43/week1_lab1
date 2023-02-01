@@ -27,6 +27,7 @@ Vue.component('product', {
                 <h1>{{ title }}</h1>
              <span v-if="onSale">{{ sale }}</span>
                 <p>{{ description }}</p>
+                <a :href="link">More products like this</a>
                 <p v-if="inStock">In stock</p>
                 <p v-else :class="{ outOfStock: !inStock }">Out of stock</p>
                 <product-details :details="details"></product-details>
@@ -36,12 +37,11 @@ Vue.component('product', {
                      :style="{ backgroundColor:variant.variantColor }"
                      @mouseover="updateProduct(index)">
                 </div>
-                
                 <p>Shipping: {{ shipping }}</p>
                 <button v-on:click="addToCart" :disabled="!inStock" :class="{ disabledButton: !inStock }">Add to cart</button>
                 <button v-on:click="deleteCart">Delete cart</button>
             </div>
-            <a :href="link">More products like this</a>
+            <div>            
    </div>
  `,
     data() {
@@ -77,9 +77,9 @@ Vue.component('product', {
     methods: {
         addToCart() {
             this.$emit('add-to-cart',
-            this.variants[this.selectedVariant].variantId);
+                this.variants[this.selectedVariant].variantId);
         },
-        deleteCart(){
+        deleteCart() {
             this.$emit('delete-from-cart',
                 this.variants[this.selectedVariant].variantId);
         },
@@ -111,22 +111,105 @@ Vue.component('product', {
     }
 })
 
+Vue.component('product-review', {
+    template: `
+   <form class="review-form" @submit.prevent="onSubmit">
+   <p v-if="errors.length">
+ <b>Please correct the following error(s):</b>
+ <ul>
+   <li v-for="error in errors">{{ error }}</li>
+ </ul>
+</p>
+
+    <p>
+        <label for="name">Name:</label>
+        <input id="name" v-model="name" placeholder="name">
+    </p>
+
+     <p>
+       <label for="review">Review:</label>
+       <textarea id="review" v-model="review"></textarea>
+     </p>
+    
+     <p>
+       <label for="rating">Rating:</label>
+       <select id="rating" v-model.number="rating">
+         <option>5</option>
+         <option>4</option>
+         <option>3</option>
+         <option>2</option>
+         <option>1</option>
+       </select>
+       
+       <input type="radio" id="yes" value="Рекомендую" v-model="recommend">
+       <label for="yes">Рекомендую</label>
+       <input type="radio" id="no" value="Не рекомендую" v-model="recommend">
+       <label for="no">Не рекомендую</label>
+     <p>
+       <input type="submit" value="Submit"> 
+     </p>
+
+</form>
+<p v-if="errors.length">
+    <b>Please correct the following error(s):</b>
+    <ul>
+        <li v-for="error in errors">{{ error }}</li>
+    </ul>
+</p>
+ `,
+    data() {
+        return {
+            name: null,
+            review: null,
+            rating: null,
+            recommend: null,
+            errors: [],
+        }
+    },
+    methods: {
+        onSubmit() {
+            if(this.name && this.review && this.rating && this.recommend) {
+                let productReview = {
+                    name: this.name,
+                    review: this.review,
+                    rating: this.rating,
+                    recommend: this.recommend,
+                }
+                this.$emit('review-submitted', productReview)
+                this.name = null
+                this.review = null
+                this.rating = null
+                this.recommend = null
+            } else {
+                if(!this.name) this.errors.push("Name required.")
+                if(!this.review) this.errors.push("Review required.")
+                if(!this.rating) this.errors.push("Rating required.")
+                if(this.recommend) this.errors.push("Recommendation required.")
+            }
+        }
+    }
+})
+
 let app = new Vue({
     el: '#app',
     data: {
         premium: true,
         cart: [],
+        reviews: [],
     },
     methods: {
         updateCart(id) {
             this.cart.push(id);
         },
-        deleteCart(id){
-            for(i = this.cart.length - 1; i >= 0; i--){
-                if(this.cart[i] === id){
-                    this.cart.splice(i,1);
+        deleteCart(id) {
+            for (let i = this.cart.length - 1; i >= 0; i--) {
+                if (this.cart[i] === id) {
+                    this.cart.splice(i, 1);
                 }
             }
+        },
+        addReview(productReview) {
+            this.reviews.push(productReview)
         }
     }
 })
