@@ -42,9 +42,8 @@ Vue.component('product', {
                 <p>Shipping: {{ shipping }}</p>
                 <button v-on:click="addToCart" :disabled="!inStock" :class="{ disabledButton: !inStock }">Add to cart</button>
                 <button v-on:click="deleteCart">Delete cart</button>
-            </div>
-            <div>            
-   </div>
+            </div> 
+            <product-tabs :reviews="reviews"></product-tabs>
    </div>
  `,
     data() {
