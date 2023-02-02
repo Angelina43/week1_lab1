@@ -134,11 +134,10 @@ Vue.component('product-tabs', {
     template: `
    <div>   
        <ul>
-         <span class="tab"
-               :class="{ activeTab: selectedTab === tab }"
-               v-for="(tab, index) in tabs"
-               @click="selectedTab = tab"
-         >{{ tab }}</span>
+         <span class="tab" 
+         :class="{ activeTab: selectedTab === tab }" 
+         v-for="(tab, index) in tabs" 
+         @click="selectedTab = tab">{{ tab }}</span>
        </ul>
        <div v-show="selectedTab === 'Reviews'">
          <p v-if="!reviews.length">There are no reviews yet.</p>
@@ -175,23 +174,17 @@ Vue.component('product-tabs', {
 
 Vue.component('product-review', {
     template: `
-   <form class="review-form" @submit.prevent="onSubmit">
-   <p v-if="errors.length">
- <b>Please correct the following error(s):</b>
- <ul>
-   <li v-for="error in errors">{{ error }}</li>
- </ul>
-</p>
-
-    <p>
+   <form class="review-form" @submit.prevent="onSubmit" v-on:keyup.delete = "onSubmit">
         <label for="name">Name:</label>
         <input id="name" v-model="name" placeholder="name">
     </p>
+    <p v-for="error in name_error">{{ error }}</p>
 
      <p>
        <label for="review">Review:</label>
        <textarea id="review" v-model="review"></textarea>
      </p>
+     <p v-for="error in review_error">{{ error }}</p>
     
      <p>
        <label for="rating">Rating:</label>
@@ -202,12 +195,15 @@ Vue.component('product-review', {
          <option>2</option>
          <option>1</option>
        </select>
+       <p v-for="error in rating_error">{{ error }}</p>
+       
        <p>Would you recommend this product?</p>
        <input type="radio" id="yes" value="Рекомендую" v-model="recommend">
        <label for="yes">Рекомендую</label>
        <input type="radio" id="no" value="Не рекомендую" v-model="recommend">
        <label for="no">Не рекомендую</label>
      <p>
+     <p v-for="error in recommend_error">{{ error }}</p>
        <input type="submit" value="Submit"> 
      </p>
 
@@ -219,11 +215,18 @@ Vue.component('product-review', {
             review: null,
             rating: null,
             recommend: null,
-            errors: [],
+            name_error: [],
+            review_error: [],
+            rating_error: [],
+            recommend_error: [],
         }
     },
     methods: {
         onSubmit() {
+            this.name_error = []
+            this.review_error = []
+            this.rating_error = []
+            this.recommend_error = []
             if(this.name && this.review && this.rating && this.recommend) {
                 let productReview = {
                     name: this.name,
@@ -237,10 +240,10 @@ Vue.component('product-review', {
                 this.rating = null
                 this.recommend = null
             } else {
-                if(!this.name) this.errors.push("Name required.")
-                if(!this.review) this.errors.push("Review required.")
-                if(!this.rating) this.errors.push("Rating required.")
-                if(this.recommend) this.errors.push("Recommendation required.")
+                if(!this.name) this.name_error.push("Name required.")
+                if(!this.review) this.review_error.push("Review required.")
+                if(!this.rating) this.rating_error.push("Rating required.")
+                if(this.recommend) this.recommend_error.push("Recommendation required.")
             }
         }
     }
