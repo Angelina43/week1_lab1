@@ -41,7 +41,7 @@ Vue.component('product', {
                 <button v-on:click="addToCart" :disabled="!inStock" :class="{ disabledButton: !inStock }">Add to cart</button>
                 <button v-on:click="deleteCart">Delete cart</button>
             </div> 
-           <div><product-tabs :reviews="reviews" :shipping="shipping" :details="details"></product-tabs>
+           <product-tabs :reviews="reviews" :shipping="shipping" :details="details"></product-tabs>
    </div>
  `,
     data() {
@@ -146,6 +146,7 @@ Vue.component('product-tabs', {
            <li v-for="review in reviews">
            <p>{{ review.name }}</p>
            <p>Rating: {{ review.rating }}</p>
+           <p>Recommend: {{ review.recommend }}</p>
            <p>{{ review.review }}</p>
            </li>
          </ul>
@@ -154,7 +155,7 @@ Vue.component('product-tabs', {
          <product-review></product-review>
        </div>
        <div v-show="selectedTab === 'Shipping'">
-            <p>{{ shipping }}</p>
+            <p>Shipping: {{ shipping }}</p>
         </div>
             
         <div v-show="selectedTab === 'Details'">
@@ -171,7 +172,6 @@ Vue.component('product-tabs', {
         }
     },
 })
-
 
 Vue.component('product-review', {
     template: `
