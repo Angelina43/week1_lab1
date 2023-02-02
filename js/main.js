@@ -176,13 +176,13 @@ Vue.component('product-review', {
     template: `
    <form class="review-form" @submit.prevent="onSubmit" v-on:keyup.delete = "onSubmit">
         <label for="name">Name:</label>
-        <input id="name" v-model="name" placeholder="name">
+        <input id="name" v-model="name" placeholder="name" required>
     </p>
     <p v-for="error in name_error">{{ error }}</p>
 
      <p>
        <label for="review">Review:</label>
-       <textarea id="review" v-model="review"></textarea>
+       <textarea id="review" v-model="review" required></textarea>
      </p>
      <p v-for="error in review_error">{{ error }}</p>
     
@@ -196,7 +196,6 @@ Vue.component('product-review', {
          <option>1</option>
        </select>
        <p v-for="error in rating_error">{{ error }}</p>
-       
        <p>Would you recommend this product?</p>
        <input type="radio" id="yes" value="Рекомендую" v-model="recommend">
        <label for="yes">Рекомендую</label>
