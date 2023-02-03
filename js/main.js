@@ -187,7 +187,7 @@ Vue.component('product-review', {
      <p v-for="error in review_error">{{ error }}</p>
     
      <p>
-       <label for="rating">Rating:</label>
+       <label :class="{ errors: !rating }" for="rating">Rating:</label>
        <select id="rating" v-model.number="rating">
          <option>5</option>
          <option>4</option>
@@ -196,7 +196,7 @@ Vue.component('product-review', {
          <option>1</option>
        </select>
        <p v-for="error in rating_error">{{ error }}</p>
-       <p>Would you recommend this product?</p>
+       <p :class="{ errors: !recommend }">Would you recommend this product?</p>
        <input type="radio" id="yes" value="Рекомендую" v-model="recommend">
        <label for="yes">Рекомендую</label>
        <input type="radio" id="no" value="Не рекомендую" v-model="recommend">

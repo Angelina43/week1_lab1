@@ -96,3 +96,7 @@ input:invalid,textarea:invalid {
     background-color: #fdd;
 }
 
+.errors{
+    background-color: #fdd;
+}
+
